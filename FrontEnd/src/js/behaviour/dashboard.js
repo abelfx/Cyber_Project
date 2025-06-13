@@ -542,3 +542,142 @@ document
   .addEventListener("click", function () {
     document.getElementById("UpdatepopupOverlay").style.display = "none";
   });
+
+// Function to get CSRF token from cookie
+function getCsrfToken() {
+    const name = 'XSRF-TOKEN=';
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const cookieArray = decodedCookie.split(';');
+    for (let cookie of cookieArray) {
+        cookie = cookie.trim();
+        if (cookie.indexOf(name) === 0) {
+            return cookie.substring(name.length, cookie.length);
+        }
+    }
+    return null;
+}
+
+// Function to add CSRF token to fetch requests
+async function fetchWithCsrf(url, options = {}) {
+    const csrfToken = getCsrfToken();
+    const defaultOptions = {
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': csrfToken
+        }
+    };
+
+    const response = await fetch(url, { ...defaultOptions, ...options });
+    if (response.status === 403) {
+        // CSRF token validation failed - refresh the page to get a new token
+        window.location.reload();
+        throw new Error('CSRF token validation failed');
+    }
+    return response;
+}
+
+// Update form submission to use CSRF token
+form.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    const productData = {
+        name: document.querySelector("#name").value.trim(),
+        description: document.querySelector("#description").value.trim(),
+        catagory: document.querySelector("#catagory").value.trim(),
+        price: parseFloat(document.querySelector("#price").value),
+        quantityInStock: parseInt(document.querySelector("#quantityInStock").value, 10),
+        supplierId: parseInt(document.querySelector("#supplierId").value, 10)
+    };
+
+    try {
+        const response = await fetchWithCsrf("http://localhost:3000/api/addProduct", {
+            method: "POST",
+            body: JSON.stringify(productData)
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            alert("Product added successfully!");
+            console.log("API Response:", result);
+            form.reset();
+            location.reload();
+        } else {
+            const error = await response.json();
+            alert("Failed to add product. " + error.message);
+        }
+    } catch (error) {
+        console.error("Error adding product:", error);
+        alert("An error occurred while adding the product. Please try again.");
+    }
+});
+
+// Update product fetching to use CSRF token
+async function fetchProducts() {
+    try {
+        const response = await fetchWithCsrf("http://localhost:3000/api/getProducts");
+        if (!response.ok) {
+            throw new Error("Failed to fetch products");
+        }
+        const products = await response.json();
+        displayProducts(products);
+    } catch (error) {
+        console.error("Error fetching products:", error);
+        alert("Failed to load products");
+    }
+}
+
+// Update product deletion to use CSRF token
+async function deleteProduct(productId) {
+    if (!confirm("Are you sure you want to delete this product?")) {
+        return;
+    }
+
+    try {
+        const response = await fetchWithCsrf(`http://localhost:3000/api/deleteProduct/${productId}`, {
+            method: "DELETE"
+        });
+
+        if (response.ok) {
+            alert("Product deleted successfully!");
+            location.reload();
+        } else {
+            const error = await response.json();
+            alert("Failed to delete product: " + error.message);
+        }
+    } catch (error) {
+        console.error("Error deleting product:", error);
+        alert("An error occurred while deleting the product.");
+    }
+}
+
+// Update product update to use CSRF token
+updateProductForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const productId = document.querySelector("[data-product-id]").getAttribute("data-product-id");
+    const updateData = {
+        name: document.querySelector("#updateName").value,
+        description: document.querySelector("#updateDescription").value,
+        catagory: document.querySelector("#updateCategory").value,
+        price: parseFloat(document.querySelector("#updatePrice").value),
+        quantityInStock: parseInt(document.querySelector("#updateQuantityInStock").value, 10),
+        supplierId: parseInt(document.querySelector("#updateSupplierId").value, 10)
+    };
+
+    try {
+        const response = await fetchWithCsrf(`http://localhost:3000/api/updateProduct/${productId}`, {
+            method: "PUT",
+            body: JSON.stringify(updateData)
+        });
+
+        if (response.ok) {
+            alert("Product updated successfully!");
+            location.reload();
+        } else {
+            const error = await response.json();
+            alert("Failed to update product: " + error.message);
+        }
+    } catch (error) {
+        console.error("Error updating product:", error);
+        alert("An error occurred while updating the product.");
+    }
+});

