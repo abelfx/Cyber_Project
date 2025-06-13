@@ -9,7 +9,7 @@ const app = express();
 
 // CORS configuration
 const corsOptions = {
-  origin: "http://127.0.0.1:5500",
+  origin: "http://127.0.0.1:49865",
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -45,10 +45,6 @@ app.use(
 mongoose
   .connect(
     process.env.MONGODB_URI || "mongodb://localhost:27017/inventory_db",
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    }
   )
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));

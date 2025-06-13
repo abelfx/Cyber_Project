@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
                         return [4 /*yield*/, fetch("http://localhost:3000/api/logout", {
-                                method: "GET",
+                                method: "POST",
                                 credentials: "include",
                             })];
                     case 1:

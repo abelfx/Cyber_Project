@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         // Make a request to the backend to logout
         const response = await fetch("http://localhost:3000/api/logout", {
-          method: "GET",
+          method: "POST",
           credentials: "include",
         });
 

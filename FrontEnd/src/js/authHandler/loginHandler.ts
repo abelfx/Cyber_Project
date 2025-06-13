@@ -38,10 +38,10 @@ if (loginForm) {
         const userRole = result.role;
         if (userRole === "seller") {
           window.location.href =
-            "/Inventory_Managment_System_2024_25/FrontEnd/src/Dashboard.html";
+            "/Cyber_Project/FrontEnd/src/Dashboard.html";
         } else if (userRole === "buyer") {
           window.location.href =
-            "/Inventory_Managment_System_2024_25/FrontEnd/src/Buyerdashborad.html";
+            "/Cyber_Project/FrontEnd/src/Buyerdashborad.html";
         } else {
           alert("Invalid user role received.");
         }

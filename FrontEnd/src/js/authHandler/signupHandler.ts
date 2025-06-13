@@ -33,7 +33,7 @@ if (signupForm) {
       if (response.ok) {
         const result: { message: string } = await response.json();
         window.location.href =
-          "/Inventory_Managment_System_2024_25/FrontEnd/src/login.html";
+          "/Cyber_Project/FrontEnd/src/login.html";
         alert("Signup successful! You can now log in.");
       } else {
         const errorData: { message: string } = await response.json();

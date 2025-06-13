@@ -73,7 +73,7 @@ if (signupForm) {
                 case 3:
                     result = _e.sent();
                     window.location.href =
-                        "/Inventory_Managment_System_2024_25/FrontEnd/src/login.html";
+                        "/Cyber_Project/FrontEnd/src/login.html";
                     alert("Signup successful! You can now log in.");
                     return [3 /*break*/, 6];
                 case 4: return [4 /*yield*/, response.json()];
