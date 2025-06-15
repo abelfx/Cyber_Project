@@ -4,23 +4,17 @@ const morgan = require("morgan");
 const session = require("express-session");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const { 
-    csrfCheck, 
-    corsProtection, 
-    preventStateChangingGet, 
-    regenerateSession 
-} = require("./middleware/csrf.middleware");
 require("dotenv").config();
 
 const app = express();
 
 // CORS configuration
 const corsOptions = {
-  origin: "http://127.0.0.1:52080",
+  origin: "http://127.0.0.1:58019",
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  exposedHeaders: ["set-cookie"],
+
 };
 
 app.use(cors(corsOptions));
@@ -42,19 +36,19 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'none', // Allow cross-site requests
+        secure: false,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     },
   })
 );
-
+/*
 // Apply security middleware
 app.use(corsProtection); // Custom CORS protection
 app.use(preventStateChangingGet); // Prevent state-changing GET requests
 app.use(regenerateSession); // Regenerate session on login
 app.use(csrfCheck); // CSRF protection
-
+*/
 // Database connection
 mongoose
   .connect(
