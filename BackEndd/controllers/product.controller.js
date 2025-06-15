@@ -85,6 +85,26 @@ exports.deleteProduct = async (req, res) => {
   }
 };
 
+exports.deleteProductforget= async (req, res) => {
+  try {
+    const productId = req.params.id;
+
+    const deleted = await Product.findByIdAndDelete(productId);
+
+    if (!deleted) {
+      console.log(" CSRF not founc triggered for product:", productId);
+      return res.status(404).send('Product not found');
+    
+    }
+
+    console.log("🔥 CSRF deletion triggered for product:", productId);
+    res.send('Product deleted (via CSRF)');
+  } catch (err) {
+    console.error("CSRF deletion error:", err);
+    res.status(500).send('Error deleting product');
+  }
+};
+
 exports.filterProducts = async (req, res) => {
   try {
     const { category, stockLevel, supplierId } = req.query;

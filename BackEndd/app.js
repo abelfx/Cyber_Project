@@ -5,18 +5,15 @@ const session = require("express-session");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
-
 const app = express();
 
 // CORS configuration
 const corsOptions = {
-  origin: "http://127.0.0.1:58019",
+  origin: ["http://127.0.0.1:58019", "http://localhost:3000"], 
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-
+  allowedHeaders: ["Content-Type", "Authorization"]
 };
-
 app.use(cors(corsOptions));
 
 // Handle preflight requests
@@ -50,6 +47,9 @@ app.use(regenerateSession); // Regenerate session on login
 app.use(csrfCheck); // CSRF protection
 */
 // Database connection
+
+
+
 mongoose
   .connect(
     process.env.MONGODB_URI || "mongodb://localhost:27017/inventory_db",
@@ -63,6 +63,8 @@ const productRoutes = require("./routes/product.routes");
 
 app.use("/api", authRoutes);
 app.use("/api", productRoutes);
+
+
 
 // Error handling middleware
 app.use((err, req, res, next) => {
